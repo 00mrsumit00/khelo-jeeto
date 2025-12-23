@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:;">
+    <title>WinZone - Play & Earn Real Money</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #cc0000;
+            --dark-red: #8b0000;
+            --accent-gold: #ffd700;
+            --dark-gold: #b8860b;
+            --success-green: #00c853;
+            --bg-dark: #1a1a2e;
+            --bg-secondary: #16213e;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 40px;
+            animation: float 15s infinite ease-in-out;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+        }
+
+        /* Header */
+        header {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 100;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.4);
+        }
+
+        .logo-text h1 {
+            color: var(--text-light);
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, var(--accent-gold), #fff, var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .iso-badge {
+            background: linear-gradient(135deg, #007acc, #005a9e);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+            color: var(--text-light);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* Ticker Banner */
+        .ticker-banner {
+            background: linear-gradient(90deg, var(--accent-gold), #fffacd, var(--accent-gold));
+            padding: 12px 0;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 2px solid var(--dark-gold);
+        }
+
+        .ticker-content {
+            display: flex;
+            animation: scroll 25s linear infinite;
+            white-space: nowrap;
+        }
+
+        .ticker-item {
+            padding: 0 40px;
+            font-weight: bold;
+            color: var(--bg-dark);
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 500px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* Game Cards */
+        .games-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-gold);
+            box-shadow: 0 12px 48px rgba(255, 215, 0, 0.4);
+        }
+
+        .game-card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            position: relative;
+        }
+
+        .game-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--success-green);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .game-info {
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+        }
+
+        .game-description {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .game-stat {
+            text-align: center;
+        }
+
+        .game-stat-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .game-stat-label {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Login Box */
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 50px 45px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 3px solid var(--accent-gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(204, 0, 0, 0.4);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            color: var(--primary-red);
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .login-subtitle {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-red);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .checkbox-group input {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            color: #555;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(204, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(204, 0, 0, 0.6);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            border-left: 4px solid #c62828;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trust-badges {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid #eee;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trust-text {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .badges-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #555;
+            border: 2px solid #ddd;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px 40px;
+            color: var(--text-light);
+            border-top: 2px solid var(--accent-gold);
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            opacity: 0.8;
+            line-height: 1.8;
+            font-size: 0.9rem;
+        }
+
+        .bank-logos {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .bank-logo {
+            background: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.85rem;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.7;
+            font-size: 0.85rem;
+        }
+
+        /* Shake Animation */
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-8px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(8px);
+            }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .games-column {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .game-card {
+                min-width: 300px;
+            }
+
+            .header-stats {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="floating-icon" style="top: 10%; left: 10%;">🎮</div>
+        <div class="floating-icon" style="top: 60%; left: 15%; animation-delay: 2s;">🏆</div>
+        <div class="floating-icon" style="top: 30%; left: 80%; animation-delay: 4s;">💰</div>
+        <div class="floating-icon" style="top: 70%; left: 70%; animation-delay: 6s;">🎯</div>
+        <div class="floating-icon" style="top: 20%; left: 50%; animation-delay: 8s;">⚡</div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="./image/logo_1.png" alt="WinZone Logo" style="height: 60px; margin-top: 10px;">
+                <div class="logo-text">
+
+                    <div class="iso-badge">ISO 9001:2015 CERTIFIED</div>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value">50K+</div>
+                    <div class="stat-label">Active Players</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">₹25L+</div>
+                    <div class="stat-label">Daily Winnings</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Secure</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Ticker Banner -->
+    <div class="ticker-banner">
+        <div class="ticker-content">
+            <span class="ticker-item">🏆 Rahul Kumar won ₹50,000 playing Cricket Mania!</span>
+            <span class="ticker-item">💰 Daily Tournaments with Cash Prizes!</span>
+            <span class="ticker-item">⚡ Instant Withdrawals to Your Bank!</span>
+            <span class="ticker-item">🎯 100% Legal & Skill-Based Games!</span>
+            <span class="ticker-item">🏆 Rahul Kumar won ₹50,000 playing Cricket Mania!</span>
+            <span class="ticker-item">💰 Daily Tournaments with Cash Prizes!</span>
+            <span class="ticker-item">⚡ Instant Withdrawals to Your Bank!</span>
+            <span class="ticker-item">🎯 100% Legal & Skill-Based Games!</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="content-wrapper">
+
+            <!-- Left Games Column -->
+            <div class="games-column">
+                <div class="game-card">
+                    <div style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600&h=400&fit=crop"
+                            alt="Cricket Game" class="game-card-image">
+                        <div class="game-badge">🔥 LIVE NOW</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">⚡ Cricket Mania</div>
+                        <div class="game-description">
+                            Build your dream team and compete in live matches. Use your cricket knowledge to win big!
+                        </div>
+                        <div class="game-stats">
+                            <div class="game-stat">
+                                <div class="game-stat-value">12.5K</div>
+                                <div class="game-stat-label">Playing Now</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value">₹5L</div>
+                                <div class="game-stat-label">Prize Pool</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop"
+                            alt="Football Game" class="game-card-image">
+                        <div class="game-badge">⚡ TRENDING</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">⚽ Football Champions</div>
+                        <div class="game-description">
+                            Strategic football gameplay with real-time tournaments. Show your tactical skills!
+                        </div>
+                        <div class="game-stats">
+                            <div class="game-stat">
+                                <div class="game-stat-value">8.2K</div>
+                                <div class="game-stat-label">Players Online</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value">₹3L</div>
+                                <div class="game-stat-label">Rewards</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Login Box -->
+            <div class="login-box">
+                <div class="login-header">
+                    <div class="login-icon">🎯</div>
+                    <h2 class="login-title">Player Login</h2>
+                    <p class="login-subtitle">Enter your credentials to start winning</p>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Login ID</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="username" placeholder="Enter your ID (e.g., admin)" autofocus>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me on this device</label>
+                </div>
+
+                <button id="login-btn" class="login-btn">Login & Play</button>
+
+                <div id="error-msg" class="error-msg">Invalid credentials. Please try again!</div>
+
+                <div class="trust-badges">
+                    <div class="trust-text">🔒 100% SECURE & TRUSTED PLATFORM</div>
+                    <div class="badges-row">
+                        <span class="trust-badge">🛡️ SSL Secured</span>
+                        <span class="trust-badge">✅ RNG Certified</span>
+                        <span class="trust-badge">⚡ Instant Payout</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Games Column -->
+            <div class="games-column">
+                <div class="game-card">
+                    <div style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600&h=400&fit=crop"
+                            alt="Rummy Game" class="game-card-image">
+                        <div class="game-badge">🎲 HOT</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">🃏 Rummy Royale</div>
+                        <div class="game-description">
+                            Classic Indian Rummy with skill-based matchmaking. Master the cards and win cash!
+                        </div>
+                        <div class="game-stats">
+                            <div class="game-stat">
+                                <div class="game-stat-value">15.7K</div>
+                                <div class="game-stat-label">Active Tables</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value">₹8L</div>
+                                <div class="game-stat-label">Daily Prizes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card">
+                    <div style="position: relative;">
+                        <img src="https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=600&h=400&fit=crop"
+                            alt="Ludo Game" class="game-card-image">
+                        <div class="game-badge">🌟 NEW</div>
+                    </div>
+                    <div class="game-info">
+                        <div class="game-title">🎲 Ludo King Pro</div>
+                        <div class="game-description">
+                            Everyone's favorite board game with real money tournaments. Roll the dice to victory!
+                        </div>
+                        <div class="game-stats">
+                            <div class="game-stat">
+                                <div class="game-stat-value">20.1K</div>
+                                <div class="game-stat-label">Games Today</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value">₹2L</div>
+                                <div class="game-stat-label">Prize Money</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🏢 Company Information</h3>
+                <p><strong>PAN:</strong> AOMPH0512A</p>
+                <p><strong>GSTIN:</strong> 27AOMPH0512A1ZM</p>
+                <p><strong>Status:</strong> ISO 9001:2015 Certified</p>
+            </div>
+            <div class="footer-section">
+                <h3>🏦 Our Banking Partners</h3>
+                <div class="bank-logos">
+                    <span class="bank-logo">AXIS BANK</span>
+                    <span class="bank-logo">SBI</span>
+                    <span class="bank-logo">ICICI</span>
+                    <span class="bank-logo">HDFC</span>
+                </div>
+                <p style="margin-top: 15px;">Secure transactions guaranteed by India's leading banks</p>
+            </div>
+            <div class="footer-section">
+                <h3>📞 24/7 Support</h3>
+                <p>Email: support@kheloaurjito.com</p>
+                <p>Phone: 1800-XXX-XXXX (Toll Free)</p>
+                <p>Response Time: Under 5 minutes</p>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2024 Skill Game Enterprises. All rights reserved. | Play responsibly. Game of skill, not chance.
+        </div>
+    </footer>
+
+    <script src="./script.js" defer></script>
+
+    <!-- <script>
+        // DOM Elements
+        const loginBtn = document.getElementById('login-btn');
+        const errorMsg = document.getElementById('error-msg');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberCheckbox = document.getElementById('remember');
+
+        // Listen for Enter key
+        usernameInput.addEventListener('keypress', handleEnterKey);
+        passwordInput.addEventListener('keypress', handleEnterKey);
+
+        function handleEnterKey(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        }
+
+        // Main Login Handler
+        loginBtn.addEventListener('click', handleLogin);
+
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+
+            // Hide previous error
+            errorMsg.style.display = 'none';
+
+            // Validate inputs
+            if (!username || !password) {
+                showError('Please enter both Login ID and Password');
+                shakeButton();
+                return;
+            }
+
+            // Check credentials
+            if (username === 'admin' && password === 'password') {
+                // Success - Store session
+                sessionStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('loginTime', new Date().toISOString());
+
+                // Handle Remember Me
+                if (rememberCheckbox.checked) {
+                    localStorage.setItem('rememberedUser', username);
+                } else {
+                    localStorage.removeItem('rememberedUser');
+                }
+
+                // Show loading state
+                loginBtn.textContent = '✅ Login Successful!';
+                loginBtn.style.background = 'linear-gradient(135deg, #00c853, #00a843)';
+                loginBtn.disabled = true;
+
+                // Redirect after animation
+                setTimeout(() => {
+                    window.location.href = './After Login/dashboard.html';
+                }, 800);
+
+            } else {
+                // Failed login
+                showError('❌ Invalid credentials! Please check your Login ID and Password');
+                shakeButton();
+
+                // Clear password field
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+
+            // Auto hide after 4 seconds
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 4000);
+        }
+
+        function shakeButton() {
+            loginBtn.classList.add('shake');
+            setTimeout(() => {
+                loginBtn.classList.remove('shake');
+            }, 500);
+        }
+
+        // Auto-fill remembered username
+        window.addEventListener('DOMContentLoaded', () => {
+            const rememberedUser = localStorage.getItem('rememberedUser');
+            if (rememberedUser) {
+                usernameInput.value = rememberedUser;
+                rememberCheckbox.checked = true;
+                passwordInput.focus();
+            }
+        });
+
+        // Add floating animation to game cards
+        const gameCards = document.querySelectorAll('.game-card');
+        gameCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.2}s`;
+        });
+
+        // Ticker animation enhancement
+        const ticker = document.querySelector('.ticker-content');
+        if (ticker) {
+            ticker.addEventListener('mouseenter', () => {
+                ticker.style.animationPlayState = 'paused';
+            });
+            ticker.addEventListener('mouseleave', () => {
+                ticker.style.animationPlayState = 'running';
+            });
+        }
+
+        // Input focus effects
+        const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function () {
+                this.parentElement.style.transform = 'scale(1.02)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
+            });
+
+            input.addEventListener('blur', function () {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Prevent space in username
+        usernameInput.addEventListener('keypress', (e) => {
+            if (e.key === ' ') {
+                e.preventDefault();
+            }
+        });
+
+        // Show password toggle (optional enhancement)
+        passwordInput.addEventListener('dblclick', function () {
+            if (this.type === 'password') {
+                this.type = 'text';
+                setTimeout(() => {
+                    this.type = 'password';
+                }, 1000);
+            }
+        });
+
+    </script> -->
+</body>

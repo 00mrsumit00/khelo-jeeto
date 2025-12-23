@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>WinZone - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:;"> -->
+    <style>
+        :root {
+            --bg-dark: #1f232a;
+            --bg-light: #2c313a;
+            --bg-header: #ffffff;
+            --text-light: #f1f1f1;
+            --text-dark: #333333;
+            --accent-orange: #ff8c00;
+            --accent-green: #28a745;
+            --accent-red: #dc3545;
+            --accent-yellow: #ffc107;
+            --border-color: #444;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            background-color: var(--bg-header);
+            color: var(--text-dark);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            color: var(--accent-red);
+            margin-right: 20px;
+            font-size: 1.2rem;
+        }
+
+        .user-details span {
+            display: block;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .user-details strong {
+            color: var(--accent-green);
+        }
+
+        .time-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .real-time-clock {
+            background-color: #4a5568;
+            border: 2px solid #2d3748;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown-timer {
+            background-color: var(--text-dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--accent-orange);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .countdown-timer.warning {
+            background-color: var(--accent-red);
+            animation: blink 0.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .main-nav {
+            background-color: var(--accent-orange);
+            display: flex;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .main-nav button {
+            background: none;
+            border: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .main-nav button:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .main-nav button:active {
+            transform: translateY(0);
+        }
+
+        .main-nav button i {
+            margin-right: 8px;
+        }
+
+        .main-nav button.logout {
+            margin-left: auto;
+            border-right: none;
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: var(--accent-red);
+        }
+
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 15px;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .top-spots {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .spot-card {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #1a1e26 100%);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+        }
+
+        .spot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .spot-card .spot-id {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-orange);
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+
+        .spot-card .spot-time {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .spot-card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .live-view {
+            flex-grow: 1;
+            background-color: #000;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid var(--accent-orange);
+        }
+
+        .live-view img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Changed to 'cover' for a better fit */
+        }
+
+        .bottom-selection {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 10px;
+            background-color: var(--bg-light);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+
+        .spot-input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .spot-label {
+            font-weight: bold;
+            color: var(--accent-orange);
+            font-size: 1.1rem;
+        }
+
+        .spot-input {
+            width: 100%;
+            padding: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+
+        .spot-input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+            transform: scale(1.05);
+        }
+
+        .spot-input.has-value {
+            background-color: #d4edda;
+            border-color: var(--accent-green);
+        }
+
+        .app-footer {
+            flex-shrink: 0;
+            border-top: 2px solid var(--border-color);
+            background-color: var(--bg-light);
+        }
+
+        .checkout-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #2c313a 0%, #1f232a 100%);
+        }
+
+        .checkout-item {
+            text-align: center;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .checkout-item span {
+            display: block;
+            color: #aaa;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .checkout-item strong {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            text-shadow: 0 0 10px rgba(40, 167, 69, 0.3);
+        }
+
+        .claim-bar {
+            display: flex;
+            padding: 15px 20px;
+            background-color: #f4f4f4;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .claim-bar .info-text {
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .claim-bar input {
+            flex-grow: 1;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s;
+        }
+
+        .claim-bar input:focus {
+            outline: none;
+            border-color: var(--accent-green);
+        }
+
+        .claim-bar .claim-btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .claim-bar .claim-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .claim-bar .claim-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* --- NEW MODAL STYLES --- */
+        .modal-overlay {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            color: var(--text-dark);
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 750px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-orange);
+        }
+
+        .modal-close-btn {
+            font-size: 2rem;
+            color: #aaa;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--text-dark);
+        }
+
+        .modal-body .ticket-details {
+            background-color: #f9f9f9;
+            border: 1px dashed #ccc;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: fit-content;
+            overflow-y: auto;
+        }
+
+        /* --- SCROLLABLE TABLE CSS --- */
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .scrollable-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scrollable-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--accent-orange);
+            color: var(--bg-dark);
+        }
+
+        .scrollable-table th,
+        .scrollable-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .scrollable-table th {
+            background-color: var(--accent-green);
+            color: white;
+        }
+
+
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        .modal-body .ticket-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .modal-body .ticket-details li {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-body .ticket-details li:last-child {
+            border-bottom: none;
+        }
+
+        .modal-body .ticket-details li span {
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .modal-body .ticket-total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 15px;
+            color: var(--text-dark);
+        }
+
+        /* --- NEW RECEIPT PREVIEW STYLES --- */
+        #ticket-details-content {
+            background-color: #f9f9f9;
+            border: 1px dashed #777;
+            padding: 0;
+
+        }
+
+        .ticket-receipt {
+            font-family: 'Courier New', Courier, monospace;
+            color: #000;
+            padding: 20px;
+        }
+
+        .ticket-receipt .header {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .ticket-receipt .divider {
+            border-top: 2px dashed #555;
+            margin: 10px 0;
+        }
+
+        .ticket-receipt .info-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .ticket-receipt .info-line span {
+            font-weight: bold;
+        }
+
+        .ticket-receipt table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+
+        tbody#ticket-table-body {
+            color: azure;
+        }
+
+        .ticket-receipt th,
+        .ticket-receipt td {
+            padding: 8px 5px;
+        }
+
+        .ticket-receipt th {
+            border-top: 2px dashed #555;
+            border-bottom: 2px dashed #555;
+        }
+
+
+        .ticket-receipt .col-spot {
+            text-align: left;
+            width: 30%;
+        }
+
+        .ticket-receipt .col-qty {
+            text-align: center;
+            width: 30%;
+        }
+
+        .ticket-receipt .col-amt {
+            text-align: right;
+            width: 40%;
+        }
+
+        .ticket-receipt .total-line {
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-align: right;
+            border-top: 2px dashed #555;
+            padding-top: 10px;
+            margin-top: 5px;
+        }
+
+        .ticket-receipt .total-line span {
+            font-size: 1rem;
+            font-weight: normal;
+            margin-right: 15px;
+        }
+
+        /* We hide the old total, since our receipt has a new one */
+        #ticket-total-amount {
+            display: none;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn.print {
+            background-color: var(--accent-orange);
+            color: white;
+        }
+
+        .modal-btn.print:hover {
+            background-color: #e67e00;
+        }
+
+        .modal-btn.confirm {
+            background-color: var(--accent-green);
+            color: white;
+        }
+
+        .modal-btn.confirm:hover {
+            background-color: #218838;
+        }
+
+        /* --- END OF PREVIEW MODAL STYLES --- */
+
+        .header-bar {
+            background-color: var(--bg-light);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--accent-orange);
+            flex-shrink: 0;
+            color: var(--text-light);
+            /* Ensure text color is light */
+        }
+
+        .header-bar h1 {
+            font-size: 1.8rem;
+            color: var(--accent-orange);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .main-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .filter-controls {
+            background-color: var(--bg-dark);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-controls label {
+            font-weight: 500;
+        }
+
+        .filter-controls input[type="date"] {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .filter-controls button {
+            background-color: var(--accent-green);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .filter-controls button:hover {
+            background-color: var(--accent-orange);
+            transform: scale(1.02);
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-dark);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .result-table th,
+        .result-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-table th {
+            background-color: var(--accent-orange);
+            color: var(--bg-dark);
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .result-table tr:nth-child(even) {
+            background-color: #242931;
+        }
+
+        tbody#results-table-body {
+            color: slategrey;
+        }
+
+        .result-table tr:hover {
+            background-color: #38404b;
+        }
+
+        .winning-spot {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-red);
+            /* Highlight winning spot */
+            text-shadow: 0 0 8px rgba(220, 53, 69, 0.8);
+            background-color: rgba(220, 53, 69, 0.1);
+            border-radius: 4px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #aaa;
+        }
+
+        /* Override general modal content for the large result modal */
+        #results-modal .modal-content {
+            padding: 0;
+            max-width: 1400px;
+            background-color: var(--bg-light);
+        }
+
+
+        @media (max-width: 1024px) {
+            .top-spots {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .bottom-selection {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-spots {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .bottom-selection {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .checkout-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="app-header">
+        <div class="user-info">
+            <img src="../image/my logo.png" alt="WinZone Logo" style="height: 60px; margin-right: 20px;">
+            <div class="user-details">
+                <span>Channel Service Operator Id:
+                    <strong id="display-username">AMIT SKILL GAME CENTRE</strong>
+                </span>
+                <span>Balance:
+                    <strong id="display-balance">₹ 3644.14</strong>
+                </span>
+            </div>
+        </div>
+        <div class="time-info">
+            <div id="draw-end-time" class="real-time-clock">00:00 AM</div>
+            <div id="countdown-timer" class="countdown-timer">00:00</div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <button id="submit-btn"><i class="fa-solid fa-check"></i> Submit(F6)</button>
+        <button id="reset-btn"><i class="fa-solid fa-undo"></i> Reset(F8)</button>
+        <button><i class="fa-solid fa-gift"></i> Bonus</button>
+        <button><i class="fa-solid fa-ban"></i> Cancel</button>
+        <button><i class="fa-solid fa-star"></i> Advance Spot</button>
+        <button><i class="fa-solid fa-trophy"></i> Result</button>
+        <button><i class="fa-solid fa-print"></i> Re-Print</button>
+        <button><i class="fa-solid fa-file-invoice"></i> Account</button>
+        <button id="refresh-btn"><i class="fa-solid fa-sync"></i> Refresh</button>
+        <button><i class="fa-solid fa-key"></i> Password</button>
+        <button class="logout"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+    </nav>
+
+    <main class="content-area">
+
+        <section class="top-spots">
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=B1" alt="Spot B1">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=J9" alt="Spot J9">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=B1" alt="Spot B1">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=I8" alt="Spot I8">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=J9" alt="Spot J9">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=I8" alt="Spot I8">
+            </div>
+            <div class="spot-card">
+                <div class="spot-id"></div>
+                <div class="spot-time"></div>
+                <img src="https://placehold.co/100x80/4a5568/FFF?text=J9" alt="Spot J9">
+            </div>
+        </section>
+
+        <section class="live-view">
+            <img src="../image/cricket_img.jpg" alt="Indian Cricket Team Playing">
+        </section>
+
+        <section class="bottom-selection">
+            <div class="spot-input-container">
+                <label class="spot-label">A0</label>
+                <input type="number" class="spot-input" data-spot="A0" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">B1</label>
+                <input type="number" class="spot-input" data-spot="B1" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">C2</label>
+                <input type="number" class="spot-input" data-spot="C2" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">D3</label>
+                <input type="number" class="spot-input" data-spot="D3" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">E4</label>
+                <input type="number" class="spot-input" data-spot="E4" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">F5</label>
+                <input type="number" class="spot-input" data-spot="F5" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">G6</label>
+                <input type="number" class="spot-input" data-spot="G6" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">H7</label>
+                <input type="number" class="spot-input" data-spot="H7" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">I8</label>
+                <input type="number" class="spot-input" data-spot="I8" min="1" value="">
+            </div>
+            <div class="spot-input-container">
+                <label class="spot-label">J9</label>
+                <input type="number" class="spot-input" data-spot="J9" min="1" value="">
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        <div class="checkout-bar">
+            <div class="checkout-item">
+                <span>Total Selected Spot</span>
+                <strong id="total-spots">0</strong>
+            </div>
+            <div class="checkout-item">
+                <span>Prize Pool Contribution</span>
+                <strong id="prize-pool">₹0</strong>
+            </div>
+            <div class="checkout-item">
+                <span>Service Charges</span>
+                <strong id="service-charge">₹0</strong>
+            </div>
+            <div class="checkout-item">
+                <span>Total Amount</span>
+                <strong id="total-amount">₹0</strong>
+            </div>
+        </div>
+        <div class="claim-bar">
+            <div class="info-text">
+                Per Spot Selection Amount Rs 10/-<br>
+                Prize for each correct Spot Selection Amount Rs 90/-
+            </div>
+            <input type="text" id="barcode-input" placeholder="Enter/Scan Barcode">
+            <button class="claim-btn" id="claim-btn">Claim</button>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="submit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Ticket</h2>
+                <span class="modal-close-btn" id="modal-close-btn">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="ticket-details" id="ticket-details-content">
+                </div>
+                <div class="ticket-total" id="ticket-total-amount">
+                    Total: ₹0
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn print" id="modal-print-btn">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <button class="modal-btn confirm" id="modal-confirm-btn">
+                    <i class="fa-solid fa-check"></i> Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- RESULT HISTORY MODAL -->
+    <div class="modal-overlay" id="results-modal">
+        <div class="modal-content" style="max-width: 1400px; padding: 0;">
+            <!-- The modal header from the results page -->
+            <header class="header-bar"
+                style="border-radius: 8px 8px 0 0; background-color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange);">
+                <h1 style="color: var(--text-light); font-size: 1.5rem;">
+                    <i class="fa-solid fa-trophy"></i> Draw History
+                </h1>
+                <span class="modal-close-btn" id="results-modal-close-btn">&times;</span>
+            </header>
+
+            <div class="main-content" style="padding: 20px; background-color: var(--bg-light);">
+                <div class="filter-controls" style="margin-bottom: 20px;">
+                    <label for="date-filter" style="color: var(--text-light);">Filter by Date:</label>
+                    <input type="date" id="date-filter" style="font-size: 0.9rem;">
+                    <button id="today-btn">Today's Results</button>
+                </div>
+
+                <div class="table-container">
+                    <table class="result-table scrollable-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 33%;">Draw ID</th>
+                                <th style="width: 33%;">Winning Spot</th>
+                                <th style="width: 33%;">Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-table-body">
+                            <tr>
+                                <td colspan="5" class="no-results">Select a date or use 'Today\'s Results' to view
+                                    history.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TICKET HISTORY MODAL -->
+    <div class="modal-overlay" id="ticket-history-modal">
+        <div class="modal-content" style="max-width: 1400px; padding: 0;">
+            <!-- Header -->
+            <header class="header-bar"
+                style="border-radius: 8px 8px 0 0; background-color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange);">
+                <h1 style="color: var(--text-light); font-size: 1.5rem;">
+                    <i class="fa-solid fa-file-invoice"></i> Ticket History
+                </h1>
+                <span class="modal-close-btn" id="ticket-modal-close-btn">&times;</span>
+            </header>
+
+            <div class="main-content" style="padding: 20px; background-color: var(--bg-light);">
+                <!-- Filters -->
+                <div class="filter-controls" style="margin-bottom: 20px; border-color: var(--border-color);">
+                    <label for="ticket-date-filter" style="color: var(--text-light);">Filter by Date:</label>
+                    <input type="date" id="ticket-date-filter" style="font-size: 0.9rem;">
+                    <button id="ticket-today-btn" style="background-color: var(--accent-orange);">Today's
+                        Tickets</button>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table class="result-table scrollable-table">
+                        <thead>
+                            <tr>
+                                <th style="background-color: var(--accent-orange); width: 15%;">Ticket ID</th>
+                                <th style="background-color: var(--accent-orange); width: 20%;">Draw ID</th>
+                                <th style="background-color: var(--accent-orange); width: 20%;">Amount</th>
+                                <th style="background-color: var(--accent-orange); width: 25%;">Time</th>
+                                <th style="background-color: var(--accent-orange); width: 20%;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ticket-table-body">
+                            <tr>
+                                <td colspan="5" class="no-results">Select a date to view ticket history.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--  ACCOUNT LEDGER MODAL  -->
+    <div class="modal-overlay" id="account-modal">
+        <div class="modal-content" style="max-width: 900px; padding: 0;">
+            <header class="header-bar"
+                style="border-radius: 8px 8px 0 0; background-color: var(--bg-dark); border-bottom: 2px solid var(--accent-yellow);">
+                <h1 style="color: var(--text-light); font-size: 1.5rem;">
+                    <i class="fa-solid fa-wallet"></i> Account Ledger
+                </h1>
+                <span class="modal-close-btn" id="account-modal-close-btn">&times;</span>
+            </header>
+
+            <div class="main-content" style="padding: 20px; background-color: var(--bg-light);">
+                <!-- User Info Summary -->
+                <div
+                    style="display: flex; justify-content: space-between; background: var(--bg-dark); padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--border-color);">
+                    <div>
+                        <span style="color: #aaa; font-size: 0.8rem;">RETAILER ID</span>
+                        <div id="acc-display-id" style="font-weight: bold; color: var(--accent-orange);">--</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: #aaa; font-size: 0.8rem;">STORE NAME</span>
+                        <div id="acc-display-name" style="font-weight: bold; color: var(--text-light);">--</div>
+                    </div>
+                </div>
+
+                <!-- Date Range Filters -->
+                <div class="filter-controls" style="margin-bottom: 20px; justify-content: center;">
+                    <label style="color: var(--text-light);">From:</label>
+                    <input type="date" id="acc-date-start">
+                    <label style="color: var(--text-light);">To:</label>
+                    <input type="date" id="acc-date-end">
+                    <button id="acc-fetch-btn" style="background-color: var(--accent-yellow); color: #000;">
+                        <i class="fa-solid fa-sync"></i> Calculate
+                    </button>
+                </div>
+
+                <!-- Ledger Table -->
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th style="background-color: var(--accent-yellow); color: #000;">Description</th>
+                            <th style="background-color: var(--accent-yellow); color: #000;">Details</th>
+                            <th style="background-color: var(--accent-yellow); color: #000;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="account-table-body" style="color: #eee;">
+                        <!-- Data will be injected here -->
+                    </tbody>
+                    <tfoot id="account-table-footer">
+                        <!-- Net to pay logic -->
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+
+</body>
+
+</html>
